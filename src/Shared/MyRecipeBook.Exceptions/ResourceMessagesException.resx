@@ -121,7 +121,6 @@
     <value>Email already registered</value>
   </data>
   <data name="EMAIL_EMPTY" xml:space="preserve">
-    <value>The e-mail must not be empty</value>
   </data>
   <data name="EMAIL_INVALID" xml:space="preserve">
     <value>The e-mail address is invalid.</value>
