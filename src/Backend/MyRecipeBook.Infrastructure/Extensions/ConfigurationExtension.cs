@@ -11,7 +11,7 @@ namespace MyRecipeBook.Infrastructure.Extensions
 
         public static string ConnectionString(this IConfiguration configuration)
         {
-            return configuration.GetConnectionString("Connection");
+            return configuration.GetConnectionString("Connection")!;
         }
     }
 }
