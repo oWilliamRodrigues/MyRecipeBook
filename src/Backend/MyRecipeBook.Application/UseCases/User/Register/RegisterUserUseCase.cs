@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using MyRecipeBook.Application.Services.AutoMapper;
-using MyRecipeBook.Application.Services.Cryptography;
 using MyRecipeBook.Communication.Requests;
 using MyRecipeBook.Communication.Responses;
 using MyRecipeBook.Domain.Repositories;
 using MyRecipeBook.Domain.Repositories.User;
+using MyRecipeBook.Domain.Security.Cryptography;
+using MyRecipeBook.Domain.Security.Tokens;
 using MyRecipeBook.Exceptions;
 using MyRecipeBook.Exceptions.ExceptionsBase;
 
@@ -16,13 +16,15 @@ namespace MyRecipeBook.Application.UseCases.User.Register
         private readonly IUserReadOnlyRepository _readOnlyRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly PasswordEncripter _passwordEncripter;
+        private readonly IPasswordEncripter _passwordEncripter;
+        private readonly IAccessTokenGenerator _accessTokenGenerator;
 
         public RegisterUserUseCase(
             IUserWriteOnlyRepository writeOnlyRepository,
             IUserReadOnlyRepository readOnlyRepository,
             IUnitOfWork unitOfWork,
-            PasswordEncripter passwordEncripter,
+            IPasswordEncripter passwordEncripter,
+            IAccessTokenGenerator accessTokenGenerator,
             IMapper mapper)
         {
             _writeOnlyRepository = writeOnlyRepository;
@@ -30,6 +32,7 @@ namespace MyRecipeBook.Application.UseCases.User.Register
             _mapper = mapper;
             _passwordEncripter = passwordEncripter;
             _unitOfWork = unitOfWork;
+            _accessTokenGenerator = accessTokenGenerator;
         }
 
         public async Task<ResponseRegisteredUserJson> Execute(RequestRegisterUserJson request)
@@ -38,6 +41,7 @@ namespace MyRecipeBook.Application.UseCases.User.Register
 
             var user = _mapper.Map<Domain.Entities.User>(request);
             user.Password = _passwordEncripter.Encrypt(request.Password);
+            user.UserIdentifier = Guid.NewGuid();
 
             await _writeOnlyRepository.Add(user);
 
@@ -46,6 +50,10 @@ namespace MyRecipeBook.Application.UseCases.User.Register
             return new ResponseRegisteredUserJson
             {
                 Name = request.Name,
+                Tokens = new ResponseTokensJson
+                {
+                    AccessToken = _accessTokenGenerator.Generate(user.UserIdentifier)
+                }
             };
         }
 

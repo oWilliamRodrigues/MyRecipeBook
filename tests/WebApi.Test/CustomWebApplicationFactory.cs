@@ -3,11 +3,15 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using MyRecipeBook.Infrastructure.DataAccess;
 using Microsoft.Extensions.DependencyInjection;
+using CommonTestUtilities.Entities;
 
 namespace WebApi.Test
 {
     public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
+        private MyRecipeBook.Domain.Entities.User _user = default!;
+        private string _password = string.Empty;
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseEnvironment("Test")
@@ -24,7 +28,28 @@ namespace WebApi.Test
                         options.UseInMemoryDatabase("InMemoryDbForTesting");
                         options.UseInternalServiceProvider(provider);
                     });
+
+                    using var scope = services.BuildServiceProvider().CreateScope();
+
+                    var dbContext = scope.ServiceProvider.GetRequiredService<MyRecipeBookDbContext>();
+
+                    dbContext.Database.EnsureDeleted();
+
+                    StartDatabase(dbContext);
                 });
+        }
+
+        public string GetEmail() => _user.Email;
+        public string GetPassword() => _password;
+        public string GetName() => _user.Name;
+        public Guid GetUserIdentifier() => _user.UserIdentifier;
+        private void StartDatabase(MyRecipeBookDbContext dbContext)
+        {
+            (_user, _password) = UserBuilder.Build();
+
+            dbContext.Users.Add(_user);
+
+            dbContext.SaveChanges();
         }
     }
 }
