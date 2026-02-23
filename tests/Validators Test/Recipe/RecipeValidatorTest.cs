@@ -1,7 +1,6 @@
 ﻿using CommonTestUtilities.Requests;
 using FluentAssertions;
 using MyRecipeBook.Application.UseCases.Recipe;
-using MyRecipeBook.Communication.Requests;
 using MyRecipeBook.Domain.Enums;
 using MyRecipeBook.Exceptions;
 using System.Diagnostics.CodeAnalysis;

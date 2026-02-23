@@ -4,9 +4,7 @@ using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Requests;
 using FluentAssertions;
 using MyRecipeBook.Application.UseCases.User.ChangePassword;
-using MyRecipeBook.Application.UseCases.User.Update;
 using MyRecipeBook.Communication.Requests;
-using MyRecipeBook.Domain.Extensions;
 using MyRecipeBook.Exceptions;
 using MyRecipeBook.Exceptions.ExceptionsBase;
 using UseCases.Test.LoggedUser;
@@ -50,8 +48,8 @@ namespace UseCases.Test.User.ChangePassword
             Func<Task> act = async () => { await useCase.Execute(request); };
 
             (await act.Should().ThrowAsync<ErrorOnValidationException>())
-                .Where(e => e.ErrorMessages.Count == 1 &&
-                    e.ErrorMessages.Contains(ResourceMessagesException.PASSWORD_EMPTY));
+                .Where(e => e._errorMessages.Count == 1 &&
+                    e._errorMessages.Contains(ResourceMessagesException.PASSWORD_EMPTY));
 
             var passwordEncripter = PasswordEncripterBuilder.Build();
 
@@ -70,8 +68,8 @@ namespace UseCases.Test.User.ChangePassword
             Func<Task> act = async () => { await useCase.Execute(request); };
 
             await act.Should().ThrowAsync<ErrorOnValidationException>()
-                .Where(e => e.ErrorMessages.Count == 1 &&
-                    e.ErrorMessages.Contains(ResourceMessagesException.PASSWORD_DIFFERENT_CURRENT_PASSWORD));
+                .Where(e => e._errorMessages.Count == 1 &&
+                    e._errorMessages.Contains(ResourceMessagesException.PASSWORD_DIFFERENT_CURRENT_PASSWORD));
 
             var passwordEncripter = PasswordEncripterBuilder.Build();
 
