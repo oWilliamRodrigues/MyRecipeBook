@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using MyRecipeBook.Communication.Responses;
 using MyRecipeBook.Exceptions;
@@ -30,7 +29,7 @@ namespace MyRecipeBook.API.Filters
                 var exception = context.Exception as ErrorOnValidationException;
 
                 context.HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Result = new BadRequestObjectResult(new ResponseErrorJson(exception!.ErrorMessages));
+                context.Result = new BadRequestObjectResult(new ResponseErrorJson(exception!._errorMessages));
             }
             else if (context.Exception is NotFoundException)
             {

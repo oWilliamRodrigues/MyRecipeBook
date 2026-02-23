@@ -1,7 +1,6 @@
 ﻿using CommonTestUtilities.Requests;
 using FluentAssertions;
 using MyRecipeBook.Application.UseCases.User.Register;
-using MyRecipeBook.Communication.Requests;
 using MyRecipeBook.Exceptions;
 
 namespace Validators_Test.User.Register

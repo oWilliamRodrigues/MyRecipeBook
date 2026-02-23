@@ -2,11 +2,6 @@
 using FluentAssertions;
 using MyRecipeBook.Application.UseCases.User.ChangePassword;
 using MyRecipeBook.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Validators_Test.User.ChangePassword
 {

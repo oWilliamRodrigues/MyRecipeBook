@@ -54,8 +54,8 @@ namespace UseCases.Test.Recipe.Update
             Func<Task> act = async () => await useCase.Execute(recipe.Id, request);
 
             (await act.Should().ThrowAsync<ErrorOnValidationException>())
-                .Where(e => e.ErrorMessages.Count == 1 &&
-                    e.ErrorMessages.Contains(ResourceMessagesException.RECIPE_TITLE_EMPTY));
+                .Where(e => e._errorMessages.Count == 1 &&
+                    e._errorMessages.Contains(ResourceMessagesException.RECIPE_TITLE_EMPTY));
         }
 
         private static UpdateRecipeUseCase CreateUseCase(
