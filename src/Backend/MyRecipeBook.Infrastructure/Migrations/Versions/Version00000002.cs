@@ -2,7 +2,7 @@
 
 namespace MyRecipeBook.Infrastructure.Migrations.Versions
 {
-    [Migration(DatabaseVersions.TABLE_RECIPES, "Create table to sabe the user's information")]
+    [Migration(DatabaseVersions.TABLE_RECIPES, "Create table to save the user's recipes")]
     public class Version00000002 : VersionBase
     {
         private const string RECIPE_TABLE_NAME = "Recipes";

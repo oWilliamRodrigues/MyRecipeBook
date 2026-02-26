@@ -56,7 +56,7 @@ namespace UseCases.Test.Recipe.Image
             var act = async () => await useCase.Execute(recipe.Id, file);
 
             (await act.Should().ThrowAsync<ErrorOnValidationException>())
-               .Where(e => e._errorMessages.Count == 1 &&
+               .Where(e => e.GetErrorMessages().Count == 1 &&
                e.Message.Equals(ResourceMessagesException.ONLY_IMAGES_ACCEPTED));
         }
 

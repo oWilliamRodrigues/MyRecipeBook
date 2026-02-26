@@ -4,7 +4,7 @@ namespace MyRecipeBook.Exceptions.ExceptionsBase
 {
     public class ErrorOnValidationException : MyRecipeBookException
     {
-        public IList<string> _errorMessages { get; set; }
+        private readonly IList<string> _errorMessages;
 
         public ErrorOnValidationException(IList<string> errorMessages) : base(string.Empty)
         {

@@ -32,7 +32,7 @@ namespace MyRecipeBook.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            AddPasswordEncripter(services, configuration);
+            AddPasswordEncripter(services);
             AddRepositories(services);
             AddLoggedUser(services);
             AddTokens(services, configuration);
@@ -95,11 +95,9 @@ namespace MyRecipeBook.Infrastructure
 
         private static void AddLoggedUser(IServiceCollection services) => services.AddScoped<ILoggedUser, LoggedUser>();
 
-        private static void AddPasswordEncripter(IServiceCollection services, IConfiguration configuration)
-        {
-            var additionalKey = configuration.GetValue<string>("Settings:Password:AdditionalKey");
-
-            services.AddScoped<IPasswordEncripter>(options => new Sha512Encripter(additionalKey!));
+        private static void AddPasswordEncripter(IServiceCollection services)
+        {           
+            services.AddScoped<IPasswordEncripter, BCryptNet>();
         }
 
         private static void AddGoogleAI(IServiceCollection services, IConfiguration configuration)

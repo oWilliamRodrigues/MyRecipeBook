@@ -61,8 +61,8 @@ namespace UseCases.Test.Recipe.Register
             Func<Task> act = async () => { await useCase.Execute(request); };
 
             (await act.Should().ThrowAsync<ErrorOnValidationException>())
-                .Where(e => e._errorMessages.Count == 1 &&
-                e._errorMessages.Contains(ResourceMessagesException.RECIPE_TITLE_EMPTY));
+                .Where(e => e.GetErrorMessages().Count == 1 &&
+                e.GetErrorMessages().Contains(ResourceMessagesException.RECIPE_TITLE_EMPTY));
         }
 
         [Fact]
@@ -79,8 +79,8 @@ namespace UseCases.Test.Recipe.Register
             Func<Task> act = async () => { await useCase.Execute(request); };
 
             (await act.Should().ThrowAsync<ErrorOnValidationException>())
-                .Where(e => e._errorMessages.Count == 1 &&
-                e._errorMessages.Contains(ResourceMessagesException.ONLY_IMAGES_ACCEPTED));
+                .Where(e => e.GetErrorMessages().Count == 1 &&
+                e.GetErrorMessages().Contains(ResourceMessagesException.ONLY_IMAGES_ACCEPTED));
         }
 
         private static RegisterRecipeUseCase CreateUseCase(MyRecipeBook.Domain.Entities.User user)

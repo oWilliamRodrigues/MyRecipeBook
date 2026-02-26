@@ -17,7 +17,7 @@ namespace CommonTestUtilities.Repositories
 
         public void GetByEmailAndPassword(User user)
         {
-            _repository.Setup(repository => repository.GetByEmailAndPassword(user.Email, user.Password)).ReturnsAsync(user);
+            _repository.Setup(repository => repository.GetByEmail(user.Email)).ReturnsAsync(user);
         }
 
         public IUserReadOnlyRepository Build() => _repository.Object;
