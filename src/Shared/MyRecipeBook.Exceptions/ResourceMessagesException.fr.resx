@@ -150,4 +150,58 @@
   <data name="USER_WITHOUT_PERMISSION_ACCESS_RESOURCE" xml:space="preserve">
     <value>L'utilisateur n'a pas la permission.</value>
   </data>
+  <data name="RECIPE_TITLE_EMPTY" xml:space="preserve">
+    <value>Le titre de la recette ne peut pas être vide.</value>
+  </data>
+  <data name="COOKING_TIME_NOT_SUPPORTED" xml:space="preserve">
+    <value>Le temps de cuisson spécifié n'est pas pris en charge.</value>
+  </data>
+  <data name="DIFFICULTY_LEVEL_NOT_SUPPORTED" xml:space="preserve">
+    <value>Le niveau de difficulté demandé n'est pas pris en charge.</value>
+  </data>
+  <data name="AT_LEAST_ONE_INGREDIENT" xml:space="preserve">
+    <value>Il est nécessaire d'ajouter au moins un ingrédient.</value>
+  </data>
+  <data name="AT_LEAST_ONE_INSTRUCTION" xml:space="preserve">
+    <value>Il est nécessaire d'ajouter au moins une instruction.</value>
+  </data>
+  <data name="DISH_TYPE_NOT_SUPPORTED" xml:space="preserve">
+    <value>Type de plat non supporté.</value>
+  </data>
+  <data name="INGREDIENT_EMPTY" xml:space="preserve">
+    <value>L'ingrédient ne peut pas être vide.</value>
+  </data>
+  <data name="NON_NEGATIVE_INSTRUCTION_STEP" xml:space="preserve">
+    <value>L'étape de l'instruction ne peut pas être négative.</value>
+  </data>
+  <data name="INSTRUCTION_EMPTY" xml:space="preserve">
+    <value>L'instruction ne peut pas être vide.</value>
+  </data>
+  <data name="INSTRUCTION_EXCEEDS_LIMIT_CHARACTERS" xml:space="preserve">
+    <value>L'instruction dépasse la limite de caractères.</value>
+  </data>
+  <data name="TWO_OR_MORE_INSTRUCTIONS_SAME_ORDER" xml:space="preserve">
+    <value>Il n'est pas permis d'avoir deux instructions ou plus dans le même ordre.</value>
+  </data>
+  <data name="RECIPE_NOT_FOUND" xml:space="preserve">
+    <value>Recette non trouvée.</value>
+  </data>
+  <data name="INVALID_NUMBER_INGREDIENTS" xml:space="preserve">
+    <value>Nombre d'ingrédients incorrect. La liste doit contenir entre 1 et 5 ingrédients.</value>
+  </data>
+  <data name="DUPLICATED_INGREDIENTS_IN_LIST" xml:space="preserve">
+    <value>Ingrédients dupliqués dans la liste.</value>
+  </data>
+  <data name="INGREDIENT_NOT_FOLLOWING_PATTERN" xml:space="preserve">
+    <value>Ingrédient ne suivant pas le modèle.</value>
+  </data>
+  <data name="ONLY_IMAGES_ACCEPTED" xml:space="preserve">
+    <value>Seules les images (PNG, JPG, JPEG) sont acceptées.</value>
+  </data>
+  <data name="EXPIRED_SESSION" xml:space="preserve">
+    <value>Session expirée.</value>
+  </data>
+  <data name="INVALID_SESSION" xml:space="preserve">
+    <value>Session invalide.</value>
+  </data>
 </root>

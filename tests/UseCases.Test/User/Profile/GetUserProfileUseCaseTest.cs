@@ -2,7 +2,6 @@
 using CommonTestUtilities.Mapper;
 using FluentAssertions;
 using MyRecipeBook.Application.UseCases.User.Profile;
-using MyRecipeBook.Infrastructure.Services.LoggedUser;
 using UseCases.Test.LoggedUser;
 
 namespace UseCases.Test.User.Profile

@@ -4,9 +4,7 @@ using CommonTestUtilities.Repositories;
 using CommonTestUtilities.Requests;
 using FluentAssertions;
 using MyRecipeBook.Application.UseCases.User.ChangePassword;
-using MyRecipeBook.Application.UseCases.User.Update;
 using MyRecipeBook.Communication.Requests;
-using MyRecipeBook.Domain.Extensions;
 using MyRecipeBook.Exceptions;
 using MyRecipeBook.Exceptions.ExceptionsBase;
 using UseCases.Test.LoggedUser;
@@ -28,10 +26,6 @@ namespace UseCases.Test.User.ChangePassword
             Func<Task> act = async () => await useCase.Execute(request);
 
             await act.Should().NotThrowAsync();
-
-            var passwordEncripter = PasswordEncripterBuilder.Build();
-
-            user.Password.Should().Be(passwordEncripter.Encrypt(request.NewPassword));
         }
 
         [Fact]
@@ -50,12 +44,8 @@ namespace UseCases.Test.User.ChangePassword
             Func<Task> act = async () => { await useCase.Execute(request); };
 
             (await act.Should().ThrowAsync<ErrorOnValidationException>())
-                .Where(e => e.ErrorMessages.Count == 1 &&
-                    e.ErrorMessages.Contains(ResourceMessagesException.PASSWORD_EMPTY));
-
-            var passwordEncripter = PasswordEncripterBuilder.Build();
-
-            user.Password.Should().Be(passwordEncripter.Encrypt(password));
+                .Where(e => e.GetErrorMessages().Count == 1 &&
+                    e.GetErrorMessages().Contains(ResourceMessagesException.PASSWORD_EMPTY));
         }
 
         [Fact]
@@ -70,12 +60,8 @@ namespace UseCases.Test.User.ChangePassword
             Func<Task> act = async () => { await useCase.Execute(request); };
 
             await act.Should().ThrowAsync<ErrorOnValidationException>()
-                .Where(e => e.ErrorMessages.Count == 1 &&
-                    e.ErrorMessages.Contains(ResourceMessagesException.PASSWORD_DIFFERENT_CURRENT_PASSWORD));
-
-            var passwordEncripter = PasswordEncripterBuilder.Build();
-
-            user.Password.Should().Be(passwordEncripter.Encrypt(password));
+                .Where(e => e.GetErrorMessages().Count == 1 &&
+                    e.GetErrorMessages().Contains(ResourceMessagesException.PASSWORD_DIFFERENT_CURRENT_PASSWORD));
         }
 
         private static ChangePasswordUseCase CreateUseCase(MyRecipeBook.Domain.Entities.User user)

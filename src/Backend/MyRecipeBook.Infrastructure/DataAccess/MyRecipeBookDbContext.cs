@@ -8,6 +8,8 @@ namespace MyRecipeBook.Infrastructure.DataAccess
         public MyRecipeBookDbContext(DbContextOptions options) : base(options){ }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

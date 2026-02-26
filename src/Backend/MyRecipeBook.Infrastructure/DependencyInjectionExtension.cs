@@ -1,19 +1,29 @@
-﻿using FluentMigrator.Runner;
+﻿using Azure.Messaging.ServiceBus;
+using Azure.Storage.Blobs;
+using FluentMigrator.Runner;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyRecipeBook.Domain.Repositories;
+using MyRecipeBook.Domain.Repositories.Recipe;
 using MyRecipeBook.Domain.Repositories.User;
 using MyRecipeBook.Domain.Security.Cryptography;
 using MyRecipeBook.Domain.Security.Tokens;
+using MyRecipeBook.Domain.Services.GoogleAI;
 using MyRecipeBook.Domain.Services.LoggedUser;
+using MyRecipeBook.Domain.Services.ServiceBus;
+using MyRecipeBook.Domain.Services.Storage;
+using MyRecipeBook.Infrastructure.Configuration;
 using MyRecipeBook.Infrastructure.DataAccess;
 using MyRecipeBook.Infrastructure.DataAccess.Repositories;
 using MyRecipeBook.Infrastructure.Extensions;
 using MyRecipeBook.Infrastructure.Security.Cryptography;
 using MyRecipeBook.Infrastructure.Security.Tokens.Access.Generator;
 using MyRecipeBook.Infrastructure.Security.Tokens.Access.Validator;
+using MyRecipeBook.Infrastructure.Services.GoogleAi;
 using MyRecipeBook.Infrastructure.Services.LoggedUser;
+using MyRecipeBook.Infrastructure.Services.ServiceBus;
+using MyRecipeBook.Infrastructure.Services.Storage;
 using System.Reflection;
 
 namespace MyRecipeBook.Infrastructure
@@ -22,10 +32,13 @@ namespace MyRecipeBook.Infrastructure
     {
         public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
-            AddPasswordEncripter(services, configuration);
+            AddPasswordEncripter(services);
             AddRepositories(services);
             AddLoggedUser(services);
             AddTokens(services, configuration);
+            AddGoogleAI(services, configuration);
+            AddAzureStorage(services, configuration);
+            AddQueue(services, configuration);
 
             if (configuration.IsUnitTestEnviroment())
                 return;
@@ -52,6 +65,10 @@ namespace MyRecipeBook.Infrastructure
             services.AddScoped<IUserWriteOnlyRepository, UserRepository>();
             services.AddScoped<IUserReadOnlyRepository, UserRepository>();
             services.AddScoped<IUserUpdateOnlyRepository, UserRepository>();
+            services.AddScoped<IUserDeleteOnlyRepository, UserRepository>();
+            services.AddScoped<IRecipeReadOnlyRepository, RecipeRepository>();
+            services.AddScoped<IRecipeWriteOnlyRepository, RecipeRepository>();
+            services.AddScoped<IRecipeUpdateOnlyRepository, RecipeRepository>();
         }
 
         private static void AddFluentMigrator(IServiceCollection services, IConfiguration configuration)
@@ -78,11 +95,65 @@ namespace MyRecipeBook.Infrastructure
 
         private static void AddLoggedUser(IServiceCollection services) => services.AddScoped<ILoggedUser, LoggedUser>();
 
-        private static void AddPasswordEncripter(IServiceCollection services, IConfiguration configuration)
-        {
-            var additionalKey = configuration.GetValue<string>("Settings:Password:AdditionalKey");
+        private static void AddPasswordEncripter(IServiceCollection services)
+        {           
+            services.AddScoped<IPasswordEncripter, BCryptNet>();
+        }
 
-            services.AddScoped<IPasswordEncripter>(options => new Sha512Encripter(additionalKey!));
+        private static void AddGoogleAI(IServiceCollection services, IConfiguration configuration)
+        {
+            var apiKey = configuration.GetValue<string>("Settings:GoogleAI:ApiKey");
+
+            services.AddScoped<GoogleAIConfig>(_ => new GoogleAIConfig
+            {
+                ApiKey = apiKey!
+            });
+
+            services.AddScoped<IGenerateRecipeAI, GoogleAIService>();
+        }
+
+        private static void AddAzureStorage(IServiceCollection services, IConfiguration configuration)
+        {
+            bool useAzureStorage = configuration.GetValue<bool>("Settings:UseAzureStorage");
+
+            if (useAzureStorage)
+            {
+                var connectionString = configuration.GetValue<string>("Settings:BlobStorage:Azure");
+                services.AddScoped<IBlobStorageService>(c => new AzureStorageService(new BlobServiceClient(connectionString)));
+            }
+            else
+            {
+                services.AddScoped<IBlobStorageService, MockBlobStorageService>();
+            }
+        }
+
+        private static void AddQueue(IServiceCollection services, IConfiguration configuration)
+        {
+            bool useServiceBus = configuration.GetValue<bool>("Settings:UseServiceBus");
+
+            if (useServiceBus)
+            {
+                var connectionString = configuration.GetValue<string>("Settings:ServiceBus:DeleteUserAccount");
+
+                var client = new ServiceBusClient(connectionString, new ServiceBusClientOptions
+                {
+                    TransportType = ServiceBusTransportType.AmqpWebSockets
+                });
+
+                var deleteQueue = new DeleteUserQueue(client.CreateSender("user"));
+
+                var deleteUserProcessor = new DeleteUserProcessor(client.CreateProcessor("user", new ServiceBusProcessorOptions
+                {
+                    MaxConcurrentCalls = 1
+                }));
+
+                services.AddSingleton(deleteUserProcessor);
+                services.AddScoped<IDeleteUserQueue>(options => deleteQueue);
+            }
+            else
+            {
+                services.AddSingleton<ServiceBusProcessor, MockServiceBusProcessor>();
+            }
         }
     }
 }

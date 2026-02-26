@@ -19,7 +19,7 @@ namespace WebApi.Test.User.Register
         {   
             var request = RequestRegisterUserJsonBuilder.Build();
 
-            var response = await DoPost(METHOD, request: request);
+            var response = await DoPost(method:METHOD, request: request);
 
             response.StatusCode.Should().Be(HttpStatusCode.Created);
 
@@ -33,12 +33,12 @@ namespace WebApi.Test.User.Register
 
         [Theory]
         [ClassData(typeof(CultureInlineDataTest))]
-        public async Task Error_Name_Empty(string culture)
+        public async Task Error_Empty_Name(string culture)
         {
             var request = RequestRegisterUserJsonBuilder.Build();
             request.Name = string.Empty;
 
-            var response = await DoPost(METHOD, request: request, culture: culture);
+            var response = await DoPost(method: METHOD, request: request, culture: culture);
 
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 
